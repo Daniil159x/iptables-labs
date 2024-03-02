@@ -1,0 +1,24 @@
+version: '3'
+services:
+  router:
+    image: ghcr.io/daniil159x/iptables-labs/sandbox:main
+    hostname: router
+    networks:
+      - "common-net"
+    cap_add:
+      - "NET_ADMIN"
+      - "NET_RAW"
+    tty: true
+    command: "sleep infinity"
+
+  client:
+    image: ghcr.io/daniil159x/iptables-labs/sandbox:main
+    hostname: "client"
+    networks:
+      - "common-net"
+    tty: true
+    command: "sleep infinity"
+
+networks:
+  common-net:
+    driver: bridge
