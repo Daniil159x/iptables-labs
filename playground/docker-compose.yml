@@ -4,21 +4,61 @@ services:
     image: ghcr.io/daniil159x/iptables-labs/sandbox:main
     hostname: router
     networks:
-      - "common-net"
+      isp-net:
+        ipv4_address: 172.28.0.111
+      home-net:
+        ipv4_address: 192.168.99.111
+      dmz-net:
+        ipv4_address: 192.168.199.111
     cap_add:
       - "NET_ADMIN"
       - "NET_RAW"
     tty: true
     command: "sleep infinity"
 
-  client:
+  cloud-host:
     image: ghcr.io/daniil159x/iptables-labs/sandbox:main
-    hostname: "client"
+    hostname: "cloud-host"
     networks:
-      - "common-net"
+      - "isp-net"
+    cap_add:
+      - "NET_ADMIN"
+    tty: true
+    command: "sleep infinity"
+
+  home-pc:
+    image: ghcr.io/daniil159x/iptables-labs/sandbox:main
+    hostname: "home-pc"
+    networks:
+      - "home-net"
+    cap_add:
+      - "NET_ADMIN"
+    tty: true
+    command: "sleep infinity"
+
+  dmz-host:
+    image: ghcr.io/daniil159x/iptables-labs/sandbox:main
+    hostname: "dmz-host"
+    networks:
+      - "dmz-net"
+    cap_add:
+      - "NET_ADMIN"
     tty: true
     command: "sleep infinity"
 
 networks:
-  common-net:
+  isp-net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+  home-net:
+    driver: macvlan
+    ipam:
+      config:
+        - subnet: 192.168.99.0/24
+  dmz-net:
+    driver: macvlan
+    ipam:
+      config:
+        - subnet: 192.168.199.0/24
